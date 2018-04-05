@@ -1,18 +1,18 @@
 package pages;
 
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+// URL http://localhost:8080/
 public class MainPageObject {
 
     private WebDriverWait wait;
     private final WebDriver driver;
 
-    // Подготовка элементов страницы.
-    By manage_locator = By.xpath("//*[@id=\"tasks\"]/div[4]/a[2]");
-
-
+    @FindBy (xpath = "//a[@href='/manage']")
+    private WebElement hrefManage;
 
     public MainPageObject(WebDriver driver) {
         this.driver = driver;
@@ -24,6 +24,12 @@ public class MainPageObject {
             throw new IllegalStateException("Wrong site page!");
         }
     }
+
+    public MainPageObject clickManage() {
+        hrefManage.click();
+        return this;
+    }
+
 
 
 

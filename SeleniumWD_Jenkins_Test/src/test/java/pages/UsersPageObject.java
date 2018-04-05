@@ -1,15 +1,14 @@
 package pages;
 
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import java.util.Collection;
-import java.util.Iterator;
+import java.util.List;
 
-public class UsersPageObject {
+//http://localhost:8080/securityRealm/
+public class UsersPageObject extends MyMethod{
 
     private WebDriverWait wait;
     private final WebDriver driver;
@@ -22,8 +21,25 @@ public class UsersPageObject {
     @FindBy(xpath = "//a[@href='user/admin/delete']")
     private WebElement hrefDeleteAdmin;
 
-    @FindBy(xpath = "//td//tr//*[text()='someuser']")
+    @FindBy(xpath = "//a[text()='Создать пользователя']")
+    private WebElement hrefCreateUser;
+
+    @FindBy(xpath = "//tr//td//*[text()='someuser']")
     private WebElement tdSomeuser;
+
+    // для поиска элемента на стронице
+    @FindBy(xpath = "//a[text()='Создать пользователя']")
+    private List<WebElement> hrefsCreateUser;
+
+    @FindBy(xpath = "//tr//td//*[text()='someuser']")
+    private List<WebElement> tdsSomeuser;
+
+    @FindBy(xpath = "//a[@href='user/someuser/delete']")
+    private List<WebElement> hrefsDelete;
+
+    @FindBy(xpath = "//a[@href='user/admin/delete']")
+    private List<WebElement> hrefsDeleteAdmin;
+
 
     public UsersPageObject(WebDriver driver) {
         this.driver = driver;
@@ -36,142 +52,30 @@ public class UsersPageObject {
         }
     }
 
-    public WebElement getElementWithTagAndText (String tagName, String text){
 
-        WebElement element = null;
-        Collection<WebElement> tags = driver.findElements(By.tagName(tagName));
-        if (tags.isEmpty()) {
-            return null;
-        }
-
-        Iterator<WebElement> i = tags.iterator();
-        WebElement tag = null;
-
-        while (i.hasNext()) {
-            tag = i.next();
-            if (tag.getText().equalsIgnoreCase(text)){
-                element = tag;
-                break;
-            }
-        }
-
-        return element;
-    }
-
-    // Отправка данных из формы.
     public UsersPageObject clickHrefDelete() {
         hrefDelete.click();
         return this;
     }
 
-    public WebElement getHrefDelete() {
-        return hrefDelete;
+    public UsersPageObject clickHrefCreteUser() {
+        hrefCreateUser.click();
+        return this;
     }
 
-    // Надёжный поиск формы.
-    public boolean isTrWithTdWithTextPresentForReal() {
-        // Первое (самое правильное) решение (работает примерно в 30-50% случаев)
-        // wait.until(ExpectedConditions.numberOfElementsToBe(By.xpath("//html/body"), 1));
-
-        // Второе (самое интересное) решение (работает примерно в 20-30% случаев; не работает в 3.3.1)
-        // waitForLoad(driver);
-
-        // Третье (самое убогое, почти за гранью запрещённого) решение -- работает в 100% случаев
-
-        try {
-            Thread.sleep(500);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-
-        Collection<WebElement> trs = driver.findElements(By.tagName("tr"));
-        if (trs.isEmpty()) {
-            return false;
-        }
-
-        Iterator<WebElement> i = trs.iterator();
-        boolean element_found = false;
-        WebElement tr = null;
-
-        while (i.hasNext()) {
-            tr = i.next();
-            if (
-                //(tr.findElement(By.tagName("td")).getText().equalsIgnoreCase("someuser"))||
-                    (tr.findElement(By.xpath("//td//*[text()=\"someuser\"]")).isDisplayed())
-                    ) {
-                element_found = true;
-                break;
-            }
-        }
-
-        return element_found;
+    public boolean existsHrefCreateUser() {
+        return existsElement(hrefsCreateUser);
     }
 
-    // Упрощённый поиск формы.
-    public boolean isTdSomeuserPresent() {
-
-        try {
-            Thread.sleep(500);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-
-        if (tdSomeuser.getText().equalsIgnoreCase("someuser")) {
-            return true;
-        } else {
-            return false;
-        }
+    public boolean existsTdSomeuser() {
+        return existsElement(tdsSomeuser);
     }
 
-    // работает вроде
-    // Упрощённый поиск формы.
-    public boolean isTdSomeuserPresentIsReal() {
-        try {
-            Thread.sleep(500);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        Collection<WebElement> trs = driver.findElements(By.xpath("//tr//td//*[text()='someuser']"));
-        if (trs.isEmpty()) {
-            return false;
-        } else {
-            return true;
-        }
-
+    public boolean existsHrefDelete() {
+        return existsElement(hrefsDelete);
     }
 
-    public boolean isAHrefPresentIsReal() {
-        try {
-            Thread.sleep(500);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        Collection<WebElement> trs = driver.findElements(By.xpath("//a[@href='user/someuser/delete']"));
-        if (trs.isEmpty()) {
-            return false;
-        } else {
-            return true;
-        }
-
-    }
-
-    public boolean isAHrefDeleteAdminPresentIsReal() {
-        try {
-            Thread.sleep(500);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        Collection<WebElement> trs = driver.findElements(By.xpath("//a[@href='user/admin/delete']"));
-        if (trs.isEmpty()) {
-            return false;
-        } else {
-            return true;
-        }
-
+    public boolean existsHrefDeleteAdmin() {
+        return existsElement(hrefsDeleteAdmin);
     }
 }

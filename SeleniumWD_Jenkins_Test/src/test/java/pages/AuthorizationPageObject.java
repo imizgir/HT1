@@ -26,12 +26,9 @@ public class AuthorizationPageObject {
         this.driver = driver;
         this.wait = new WebDriverWait(this.driver, 30);
 
-        // Провекрка того факта, что мы на верной странице.
-        //if ((!driver.getTitle().equals("Jenkins")) ||
-        //        (!driver.getCurrentUrl().equals("http://localhost:8080/login?from=%2F"))) {
-        //    throw new IllegalStateException("Wrong site page!");
-        //}
     }
+
+    // проверяем, выполнена ли авторизация
     public boolean isLogined() {
         try {
             Thread.sleep(500);
@@ -48,29 +45,22 @@ public class AuthorizationPageObject {
 
     }
 
-
-    // Заполнение имени.
     public AuthorizationPageObject setUsername(String name) {
         driver.findElement(username_locator).clear();
         driver.findElement(username_locator).sendKeys(name);
         return this;
     }
 
-    // Заполнение веса.
     public AuthorizationPageObject setPassword(String password) {
         driver.findElement(password_locator).clear();
         driver.findElement(password_locator).sendKeys(password);
         return this;
     }
 
-    // Заполнение роста.
     public AuthorizationPageObject setRememberMe(String rememberMe) {
         if (rememberMe.equals("yes")) {
             driver.findElement(remember_me_locator).click();
         }
-        //else {
-        //    driver.findElement(remember_me_locator).clear();
-        //}
         return this;
     }
 
@@ -94,59 +84,8 @@ public class AuthorizationPageObject {
         return submitForm();
     }
 
-    // Упрощённый поиск формы.
-    public boolean isFormPresent() {
-        if (driver.findElement(form_locator) != null) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
     // Надёжный поиск формы.
     public boolean isFormPresentForReal() {
-        // Первое (самое правильное) решение (работает примерно в 30-50% случаев)
-        // wait.until(ExpectedConditions.numberOfElementsToBe(By.xpath("//html/body"), 1));
-
-        // Второе (самое интересное) решение (работает примерно в 20-30% случаев; не работает в 3.3.1)
-        // waitForLoad(driver);
-
-        // Третье (самое убогое, почти за гранью запрещённого) решение -- работает в 100% случаев
-
-        try {
-            Thread.sleep(500);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-
-        Collection<WebElement> forms = driver.findElements(By.tagName("form"));
-        if (forms.isEmpty()) {
-            return false;
-        }
-
-        Iterator<WebElement> i = forms.iterator();
-        boolean form_found = false;
-        WebElement form = null;
-
-        while (i.hasNext()) {
-            form = i.next();
-            if ((form.findElement(By.name("j_username")).getAttribute("type").equalsIgnoreCase("text")) &&
-                    (form.findElement(By.name("j_password")).getAttribute("type").equalsIgnoreCase("text")) &&
-                    (form.findElement(By.name("remember_me")).getAttribute("type").equalsIgnoreCase("checkbox")) &&
-                    (form.findElement(By.xpath("//*[@id=\"yui-gen1-button\"]")).getAttribute("value").equalsIgnoreCase("войти"))
-                    //&& (form.findElements(By.xpath("//input")).size() == 3)
-                    ) {
-                form_found = true;
-                break;
-            }
-        }
-
-        return form_found;
-    }
-
-    // Надёжный поиск формы.
-    public boolean isFormPresentForRealWithXPath() {
         // Первое (самое правильное) решение (работает примерно в 30-50% случаев)
         // wait.until(ExpectedConditions.numberOfElementsToBe(By.xpath("//html/body"), 1));
 
@@ -193,18 +132,14 @@ public class AuthorizationPageObject {
         return driver.findElement(body_locator).getText().contains(search_string);
     }
 
-    // Получение значения имени.
     public String getUsername() {
         return driver.findElement(username_locator).getAttribute("value");
     }
 
-    // Получение значения веса.
     public String getPassword() {
         return driver.findElement(password_locator).getAttribute("value");
     }
 
-
-    // Получение значения пола.
     public String getRememberMe() {
         if (driver.findElement(remember_me_locator).isSelected()) {
             return "yes";
@@ -212,7 +147,6 @@ public class AuthorizationPageObject {
             return "";
         }
     }
-
 
     public String getProfileLink() {
         return driver.findElement(profile_link_locator).getAttribute("href");

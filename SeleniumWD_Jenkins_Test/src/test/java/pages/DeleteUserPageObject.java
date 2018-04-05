@@ -19,7 +19,6 @@ public class DeleteUserPageObject {
     private WebElement submit_button;
 
 
-
     public DeleteUserPageObject(WebDriver driver) {
         this.driver = driver;
         this.wait = new WebDriverWait(this.driver, 30);
@@ -44,7 +43,6 @@ public class DeleteUserPageObject {
         }
     }
 
-    // Отправка данных из формы.
     public DeleteUserPageObject submitDelete() {
         submit_button.click();
         return this;

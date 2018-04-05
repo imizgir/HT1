@@ -9,6 +9,8 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import java.util.Collection;
 import java.util.Iterator;
 
+// класс страницы создания пользователя
+// URL http://localhost:8080/securityRealm/addUser
 public class CreateUserPageObject {
 
     private WebDriverWait wait;
@@ -16,13 +18,10 @@ public class CreateUserPageObject {
     String url = "http://localhost:8080/securityRealm/addUser";
 
     // Подготовка элементов страницы.
-
-    private By username_locator = By.xpath("//*[@id=\"username\"]");
-
     @FindBy(xpath = "//body")
     private WebElement body;
 
-    @FindBy(xpath = "//*[@id=\"main-panel\"]/form") //?
+    @FindBy(xpath = "//form[@id='/securityRealm/createAccountByAdmin']")
     private WebElement form;
 
     @FindBy(name = "username")
@@ -42,14 +41,7 @@ public class CreateUserPageObject {
 
     @FindBy(xpath = "//button[text()='Создать пользователя']")
     private WebElement submit_button;
-/*
-    @FindBy(xpath = "//table/tbody/tr[2]/td[2]")
-    private WebElement user_message;
 
-    @FindBy(xpath = "//form/table/tbody/tr/td")
-    private WebElement error_message;
-
-*/
 
     public CreateUserPageObject(WebDriver driver) {
         this.driver = driver;
@@ -62,42 +54,35 @@ public class CreateUserPageObject {
         }
     }
 
-    // Заполнение имени.
-    public CreateUserPageObject setUsernameLocator(String value) {
-        driver.findElement(username_locator).clear();
-        driver.findElement(username_locator).sendKeys(value);
-        return this;
-    }
-
-    // Заполнение имени.
+    // Заполнение имени
     public CreateUserPageObject setUsername(String value) {
         username.clear();
         username.sendKeys(value);
         return this;
     }
 
-    // Заполнение имени.
+    // Заполнение пароля
     public CreateUserPageObject setPassword(String value) {
         password1.clear();
         password1.sendKeys(value);
         return this;
     }
 
-    // Заполнение имени.
+    // подтверждение пароля
     public CreateUserPageObject setConfirmPassword(String value) {
         password2.clear();
         password2.sendKeys(value);
         return this;
     }
 
-    // Заполнение имени.
+    // заполнение ФИО
     public CreateUserPageObject setFullname(String value) {
         fullname.clear();
         fullname.sendKeys(value);
         return this;
     }
 
-    // Заполнение имени.
+    // заполнение email
     public CreateUserPageObject setEmail(String value) {
         email.clear();
         email.sendKeys(value);
@@ -120,59 +105,8 @@ public class CreateUserPageObject {
         return this;
     }
 
-
-    // Упрощённый поиск формы.
-    public boolean isFormPresent() {
-        if (form != null) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
     // Надёжный поиск формы.
-    public boolean isFormPresentForReal() {
-        // Первое (самое правильное) решение (работает примерно в 30-50% случаев)
-        // wait.until(ExpectedConditions.numberOfElementsToBe(By.xpath("//html/body"), 1));
-
-        // Второе (самое интересное) решение (работает примерно в 20-30% случаев; не работает в 3.3.1)
-        // waitForLoad(driver);
-
-        // Третье (самое убогое, почти за гранью запрещённого) решение -- работает в 100% случаев
-
-        try {
-            Thread.sleep(500);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-
-        Collection<WebElement> forms = driver.findElements(By.tagName("form"));
-        if (forms.isEmpty()) {
-            return false;
-        }
-
-        Iterator<WebElement> i = forms.iterator();
-        boolean form_found = false;
-        WebElement form = null;
-
-        while (i.hasNext()) {
-            form = i.next();
-            if ((form.findElement(By.cssSelector("input")).getAttribute("type").equalsIgnoreCase("text")) &&
-                    (form.findElement(By.cssSelector("input")).getAttribute("type").equalsIgnoreCase("password")) &&
-                    (form.findElement(By.cssSelector("input")).getAttribute("type").equalsIgnoreCase("password")) &&
-                    (form.findElement(By.cssSelector("input")).getAttribute("type").equalsIgnoreCase("text")) &&
-                    (form.findElement(By.cssSelector("input")).getAttribute("type").equalsIgnoreCase("text"))) {
-                form_found = true;
-                break;
-            }
-        }
-
-        return form_found;
-    }
-
-    // Надёжный поиск формы.
-    public WebElement getFormPresentForReal() {
+    public boolean isFormPresentWithEmptyFields() {
         // Первое (самое правильное) решение (работает примерно в 30-50% случаев)
         // wait.until(ExpectedConditions.numberOfElementsToBe(By.xpath("//html/body"), 1));
 
@@ -189,46 +123,26 @@ public class CreateUserPageObject {
 
         Collection<WebElement> forms = driver.findElements(By.tagName("form"));
         if (forms.isEmpty()) {
-            return null;
+            return false;
         }
 
         Iterator<WebElement> i = forms.iterator();
-        WebElement form = null;
-
-        while (i.hasNext()) {
-            form = i.next();
-            if ((form.findElement(By.xpath("//input[@type='text']")).isDisplayed()) &&
-                    (form.findElement(By.xpath("//input[@type='password']")).isDisplayed()) &&
-                    (form.findElement(By.xpath("//input[@type='password']")).isDisplayed()) &&
-                    (form.findElement(By.xpath("//input[@type='text']")).isDisplayed()) &&
-                    (form.findElement(By.xpath("//input[@type='text']")).isDisplayed())) {
-                return form;
-            }
-        }
-        return null;
-    }
-
-    public boolean isInputsEmpty(WebElement form) {
         boolean result = false;
+        WebElement form = null;
 
-        Collection<WebElement> inputs = form.findElements(By.tagName("input"));
-        if (inputs.isEmpty()) {
-            return result;
-        }
-
-        Iterator<WebElement> i = inputs.iterator();
-        WebElement input = null;
 
         while (i.hasNext()) {
-            input = i.next();
-            if ((input.getText().equalsIgnoreCase(""))) {
+            form = i.next();
+            if ((form.findElement(By.xpath("//input[@type='text']")).getAttribute("value").isEmpty()) &&
+                    (form.findElement(By.xpath("//input[@type='password']")).getAttribute("value").isEmpty()) &&
+                    (form.findElement(By.xpath("//input[@type='password']")).getAttribute("value").isEmpty()) &&
+                    (form.findElement(By.xpath("//input[@type='text']")).getAttribute("value").isEmpty()) &&
+                    (form.findElement(By.xpath("//input[@type='text']")).getAttribute("value").isEmpty())) {
                 result = true;
-                break;
             }
         }
         return result;
     }
-
 
     // Получение значения имени.
     public String getUsername() {
@@ -250,10 +164,6 @@ public class CreateUserPageObject {
     public String getEmail() {
         return email.getAttribute("value");
     }
-
-
-
-
 
 
 }
